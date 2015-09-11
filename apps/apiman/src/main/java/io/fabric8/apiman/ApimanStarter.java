@@ -15,6 +15,7 @@
  */
 package io.fabric8.apiman;
 
+import io.apiman.manager.api.core.config.ApiManagerConfig;
 import io.apiman.manager.api.micro.ManagerApiMicroServiceConfig;
 import io.fabric8.utils.Systems;
 
@@ -32,13 +33,13 @@ public class ApimanStarter {
      * @throws Exception when any unhandled exception occurs
      */
     public static final void main(String [] args) throws Exception {
-        
+
     	Fabric8ManagerApiMicroService microService = new Fabric8ManagerApiMicroService();
     	setFabric8Props();
         microService.start();
         microService.join();
     }
-    
+
     public static void setFabric8Props() {
     	String host = null;
 		try {
@@ -54,19 +55,23 @@ public class ApimanStarter {
     		host = hp[0];
     	}
     	String protocol = Systems.getEnvVarOrSystemProperty("ELASTICSEARCH_PROTOCOL", "http");
-    	 
-        if (System.getProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_HOST) == null) 
+
+        if (System.getProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_HOST) == null)
         	System.setProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_HOST, host);
-        if (System.getProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_PORT) == null) 
+        if (System.getProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_PORT) == null)
         	System.setProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_PORT, hp[1]);
-        if (System.getProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_PROTOCOL) == null) 
+        if (System.getProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_PROTOCOL) == null)
         	System.setProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_METRICS_ES_PROTOCOL, protocol);
-        if (System.getProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_CLUSTER_NAME) == null) 
+        if (System.getProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_CLUSTER_NAME) == null)
         	System.setProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_CLUSTER_NAME, "elasticsearch");
         System.out.println("Elastic Connection Properties set to:");
         System.out.print(System.getProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_HOST));
         System.out.print(System.getProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_PORT));
         System.out.print(System.getProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_PROTOCOL));
         System.out.println(System.getProperty(ManagerApiMicroServiceConfig.APIMAN_MANAGER_STORAGE_ES_CLUSTER_NAME));
+
+        if (System.getProperty(ApiManagerConfig.APIMAN_MANAGER_SERVICE_CATALOG_TYPE) == null)
+            System.setProperty(ApiManagerConfig.APIMAN_MANAGER_SERVICE_CATALOG_TYPE, Fabric8ServiceCatalog.class.getName());
+
     }
 }
